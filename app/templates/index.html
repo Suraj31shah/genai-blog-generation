@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="grid md:grid-cols-2 gap-8 items-start">
+
+  <!-- Input -->
+  <div class="space-y-4">
+    <h1 class="text-3xl font-bold">Generate Blog Instantly 🚀</h1>
+    <p class="text-zinc-400">Enter a topic and let AI write for you.</p>
+
+    <textarea
+      id="prompt"
+      class="w-full h-40 bg-zinc-900 border border-zinc-700 rounded-lg p-4 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500"
+      placeholder="Enter blog topic..."
+    ></textarea>
+
+    <button
+      onclick="generateBlog()"
+      class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-semibold py-3 rounded-lg transition"
+    >
+      Generate Blog
+    </button>
+  </div>
+
+  <!-- Output -->
+  <div>
+    <h2 class="text-xl font-semibold mb-3">Generated Blog ✍️</h2>
+    <div
+      id="output"
+      class="bg-zinc-900 border border-zinc-700 rounded-lg p-4 min-h-[300px] whitespace-pre-wrap"
+    >
+      Your blog will appear here...
+    </div>
+  </div>
+
+</section>
+{% endblock %}
