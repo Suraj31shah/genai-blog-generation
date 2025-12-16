@@ -9,12 +9,29 @@ async function generateBlog() {
 
   output.innerText = "⏳ Generating blog...";
 
-  const response = await fetch("/api/generate-blog", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt })
-  });
+  try {
+    const response = await fetch("/api/generate-blog", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt })
+    });
 
-  const data = await response.json();
-  output.innerText = data.blog;
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || "Request failed");
+    }
+
+    const data = await response.json();
+
+    console.log("API response:", data); // 🔍 DEBUG
+
+    // 👇 EXACT key match
+    output.innerText = data.blog;
+
+  } catch (error) {
+    console.error(error);
+    output.innerText = "❌ Error generating blog.";
+  }
 }
