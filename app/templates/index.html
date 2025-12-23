@@ -3,16 +3,35 @@
 {% block content %}
 <section class="grid md:grid-cols-2 gap-8 items-start">
 
-  <!-- Input -->
+  <!-- LEFT: Input Panel -->
   <div class="space-y-4">
     <h1 class="text-3xl font-bold">Generate Blog Instantly 🚀</h1>
-    <p class="text-zinc-400">Enter a topic and let AI write for you.</p>
+    <p class="text-zinc-400">Enter a topic and customize the tone & language.</p>
 
     <textarea
       id="prompt"
-      class="w-full h-40 bg-zinc-900 border border-zinc-700 rounded-lg p-4 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500"
+      class="w-full h-32 bg-zinc-900 border border-zinc-700 rounded-lg p-4 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500"
       placeholder="Enter blog topic..."
     ></textarea>
+
+    <select
+      id="tone"
+      class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-white"
+    >
+      <option value="Professional">Professional</option>
+      <option value="Casual">Casual</option>
+      <option value="Technical">Technical</option>
+      <option value="Marketing">Marketing</option>
+    </select>
+
+    <select
+      id="language"
+      class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-white"
+    >
+      <option value="English">English</option>
+      <option value="Hindi">Hindi</option>
+      <option value="Spanish">Spanish</option>
+    </select>
 
     <button
       onclick="generateBlog()"
@@ -22,16 +41,50 @@
     </button>
   </div>
 
-  <!-- Output -->
-  <div>
-    <h2 class="text-xl font-semibold mb-3">Generated Blog ✍️</h2>
-    <div
-      id="output"
-      class="bg-zinc-900 border border-zinc-700 rounded-lg p-4 min-h-[300px] whitespace-pre-wrap"
-    >
-      Your blog will appear here...
+  <!-- RIGHT: Editor + Image Sidebar -->
+  <div class="grid grid-cols-4 gap-4">
+
+    <!-- Editor -->
+    <div class="col-span-3">
+      <textarea
+        id="editor"
+        class="w-full min-h-[300px] bg-zinc-900 border border-zinc-700 rounded-lg p-4 text-white"
+      ></textarea>
     </div>
+
+    <!-- Image Sidebar -->
+    <div class="bg-zinc-900 p-3 rounded-lg space-y-3">
+      <h3 class="font-semibold text-sm">Images</h3>
+
+      <button
+        onclick="fetchImages()"
+        class="w-full bg-emerald-500 text-black py-2 rounded"
+      >
+        Fetch Images
+      </button>
+
+      <div
+        id="imageResults"
+        class="grid grid-cols-2 gap-2 mt-3"
+      ></div>
+    </div>
+
   </div>
 
 </section>
+
+<!-- ✅ Floating Selection Toolbar (OUTSIDE layout) -->
+<div
+  id="selectionToolbar"
+  class="hidden fixed bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg p-2 space-x-2 z-50"
+>
+  <button onclick="regenerate('rewrite')">Rewrite</button>
+  <button onclick="regenerate('expand')">Expand</button>
+  <button onclick="regenerate('shorten')">Shorten</button>
+  <button onclick="regenerate('seo')">SEO</button>
+  <button onclick="regenerate('tone')">Change Tone</button>
+  <button onclick="regenerate('translate')">Translate</button>
+  <button onclick="regenerate('grammar')">Fix Grammar</button>
+</div>
+
 {% endblock %}
