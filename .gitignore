@@ -3,3 +3,4 @@ venv/
 .env
 __pycache__/
 *.pyc
+app/auth/firebase_key.json
