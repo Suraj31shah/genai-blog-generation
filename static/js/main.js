@@ -26,16 +26,47 @@ window.addEventListener("load", function () {
     return;
   }
 
+  // Inject Dark Mode Styles into Editor Iframe
+  CKEDITOR.addCss(`
+    body { 
+      background-color: #000 !important; 
+      color: #e0e0e0 !important; 
+      font-family: 'Outfit', sans-serif !important;
+      font-size: 18px;
+      line-height: 1.8;
+      padding: 20px;
+    }
+    p { margin-bottom: 1.5em; }
+    a { color: #00ffa3 !important; text-decoration: underline; }
+    h1, h2, h3, h4 { color: #fff !important; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em; }
+    h1 { font-size: 2.2em; border-bottom: 2px solid #333; padding-bottom: 0.3em; }
+    h2 { font-size: 1.8em; }
+    h3 { font-size: 1.4em; color: #00ffa3 !important; }
+    blockquote { 
+      border-left: 4px solid #b026ff; 
+      background: rgba(176, 38, 255, 0.1);
+      padding: 10px 20px; 
+      margin: 1.5em 0;
+      color: #ccc; 
+      font-style: italic;
+    }
+    ul, ol { margin-left: 2em; margin-bottom: 1.5em; }
+    li { margin-bottom: 0.5em; }
+    hr { border: 0; border-top: 1px solid #333; margin: 2em 0; }
+  `);
+
   CKEDITOR.replace("editor", {
-    height: 400,
+    height: 500, // Increased height to match new UI
+    uiColor: '#000000', // Dark UI base
     removePlugins: "elementspath",
     resize_enabled: false,
     toolbar: [
-      { name: "basicstyles", items: ["Bold", "Italic", "Underline"] },
-      { name: "paragraph", items: ["NumberedList", "BulletedList", "Blockquote"] },
+      { name: "basicstyles", items: ["Bold", "Italic", "Underline", "Strike"] },
+      { name: "paragraph", items: ["NumberedList", "BulletedList", "Blockquote", "JustifyLeft", "JustifyCenter"] },
       { name: "links", items: ["Link", "Unlink"] },
-      { name: "insert", items: ["Image", "Table"] },
-      { name: "clipboard", items: ["Undo", "Redo"] },
+      { name: "insert", items: ["Image", "Table", "HorizontalRule"] },
+      { name: "styles", items: ["Format", "Font", "FontSize"] },
+      { name: "colors", items: ["TextColor", "BGColor"] },
       { name: "tools", items: ["Maximize"] }
     ]
   });
@@ -44,6 +75,9 @@ window.addEventListener("load", function () {
     if (evt.editor.name === "editor") {
       editorReady = true;
       console.log("✅ CKEditor is ready");
+
+      // Default content
+      evt.editor.setData("<p>✨ Ready to generate amazing content...</p>");
     }
   });
 });
@@ -67,7 +101,7 @@ async function generateBlog() {
     return;
   }
 
-  setEditorData("<p>⏳ Generating blog… please wait.</p>");
+  setEditorData("<p class='animate-pulse'>🔮 Consulting the AI oracles...</p>");
 
   try {
     const response = await fetch("/api/generate-blog", {
@@ -108,7 +142,7 @@ async function fetchImages() {
     return;
   }
 
-  container.innerHTML = "<p class='text-sm text-zinc-400'>Loading images…</p>";
+  container.innerHTML = "<p class='text-sm text-[#00ffa3] animate-pulse'>🔍 Scanning visual dimensions...</p>";
 
   try {
     const res = await fetch(`/api/images?query=${encodeURIComponent(topic)}`);
@@ -117,30 +151,41 @@ async function fetchImages() {
     container.innerHTML = "";
 
     if (!data.images || data.images.length === 0) {
-      container.innerHTML = "<p class='text-sm text-zinc-400'>No images found</p>";
+      container.innerHTML = "<p class='text-sm text-zinc-500'>No visuals found in this timeline.</p>";
       return;
     }
 
     data.images.forEach(img => {
+      // Create a stylish card for each image
+      const wrapper = document.createElement("div");
+      wrapper.className = "relative group cursor-pointer overflow-hidden rounded-lg border border-zinc-800 hover:border-[#00ffa3] transition-all duration-300";
+
       const imageEl = document.createElement("img");
       imageEl.src = img.thumbnail;
-      imageEl.className = "cursor-pointer rounded hover:opacity-80";
-      imageEl.title = "Click to insert image";
+      imageEl.className = "w-full h-32 object-cover transition-transform duration-500 group-hover:scale-110";
+      imageEl.title = "Click to insert";
 
-      imageEl.onclick = () => insertImageToEditor(img.original);
+      const overlay = document.createElement("div");
+      overlay.className = "absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300";
+      overlay.innerHTML = "<span class='text-[#00ffa3] font-bold text-xs'>INSERT +</span>";
 
-      container.appendChild(imageEl);
+      wrapper.onclick = () => insertImageToEditor(img.original);
+
+      wrapper.appendChild(imageEl);
+      wrapper.appendChild(overlay);
+      container.appendChild(wrapper);
     });
 
   } catch (error) {
     console.error(error);
-    container.innerHTML = "<p class='text-sm text-red-400'>Failed to load images</p>";
+    container.innerHTML = "<p class='text-sm text-red-500'>System Failure: Visuals unavailable.</p>";
   }
 }
 
 /* ============================
    Insert Image into CKEditor
 ============================ */
+
 function insertImageToEditor(imageUrl) {
   const editor = CKEDITOR.instances.editor;
 
