@@ -64,6 +64,9 @@
     </div>
 </section>
 
+{% endblock %}
+
+{% block scripts %}
 <script>
     document.getElementById('signup-form').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -87,24 +90,11 @@
             return;
         }
 
+        let userCredential;
+
         try {
-            const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-            const user = userCredential.user;
-
-            // Update display name (Username)
-            await user.updateProfile({
-                displayName: username
-            });
-
-            // Store in Firestore for professional edge cases
-            const db = firebase.firestore();
-            await db.collection('users').doc(user.uid).set({
-                username: username,
-                email: email,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-
-            window.location.href = '/';
+            // 1. Create User (Critical)
+            userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
         } catch (error) {
             console.error(error);
             if (error.code === 'auth/email-already-in-use') {
@@ -113,7 +103,29 @@
                 errorEl.textContent = error.message;
             }
             errorEl.classList.remove('hidden');
+            return;
         }
+
+        // 2. Best-effort updates (Profile & Database)
+        try {
+            const user = userCredential.user;
+            await user.updateProfile({
+                displayName: username
+            });
+
+            const db = firebase.firestore();
+            await db.collection('users').doc(user.uid).set({
+                username: username,
+                email: email,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } catch (dbError) {
+            console.error("Profile/DB update failed:", dbError);
+            // We do NOT stop the redirect, as the user is "signed in" technically
+        }
+
+        // 3. Redirect
+        window.location.href = '/';
     });
 </script>
 {% endblock %}
