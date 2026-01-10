@@ -16,6 +16,7 @@ FIREBASE_CONFIG = {
     "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID"),
     "appId": os.getenv("FIREBASE_APP_ID")
 }
+print("🔥 Firebase Config Loaded:", FIREBASE_CONFIG["projectId"])
 
 
 
