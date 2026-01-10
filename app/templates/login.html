@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="min-h-[80vh] flex items-center justify-center py-10">
+    <div class="glass p-10 rounded-3xl shadow-2xl w-full max-w-md space-y-8 animate-float"
+        style="animation-duration: 12s;">
+
+        <div class="text-center space-y-2">
+            <h2 class="text-4xl font-bold tracking-tight">Welcome <span class="text-[#00ffa3]">Back</span></h2>
+            <p class="text-zinc-400 font-mono text-sm">Log in to your generator dashboard.</p>
+        </div>
+
+        <form id="login-form" class="space-y-6">
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-[#00ffa3] tracking-widest uppercase block">Email Address</label>
+                <input id="login-email" type="email" required
+                    class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 focus:outline-none focus:border-[#00ffa3] focus:ring-1 focus:ring-[#00ffa3] transition-all text-white placeholder-zinc-700"
+                    placeholder="name@example.com" />
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-[#b026ff] tracking-widest uppercase block">Password</label>
+                <input id="login-password" type="password" required
+                    class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 focus:outline-none focus:border-[#b026ff] focus:ring-1 focus:ring-[#b026ff] transition-all text-white placeholder-zinc-700"
+                    placeholder="••••••••" />
+            </div>
+
+            <div id="login-error"
+                class="hidden text-red-500 text-sm font-medium bg-red-500/10 p-3 rounded-lg border border-red-500/20">
+                <!-- Error message will be injected here -->
+            </div>
+
+            <button type="submit"
+                class="group w-full relative bg-gradient-to-r from-[#00ffa3] to-emerald-600 text-black font-black text-lg py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] overflow-hidden">
+                <span class="relative z-10">LOG IN</span>
+                <div
+                    class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                </div>
+            </button>
+        </form>
+
+        <div class="text-center">
+            <p class="text-zinc-500 text-sm">
+                Not a user?
+                <a href="/signup" class="text-[#00ffa3] font-bold hover:underline">Create an account</a>
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const errorEl = document.getElementById('login-error');
+
+        errorEl.classList.add('hidden');
+
+        try {
+            await firebase.auth().signInWithEmailAndPassword(email, password);
+            window.location.href = '/';
+        } catch (error) {
+            console.error(error);
+            errorEl.textContent = error.message;
+            errorEl.classList.remove('hidden');
+        }
+    });
+</script>
+{% endblock %}

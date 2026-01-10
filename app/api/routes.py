@@ -1,10 +1,8 @@
-from fastapi import APIRouter, HTTPException , Depends
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import requests
 import os
 from dotenv import load_dotenv
-from app.api.auth import verify_firebase_token
-from app.services.user_service import get_or_create_user
 
 load_dotenv()
 
@@ -57,8 +55,6 @@ Rules:
     ]
 
     return call_groq(messages, max_tokens=200)
-
-# done
 
 def generate_outline(topic: str, keywords: str):
     messages = [
@@ -281,15 +277,4 @@ Return only the rewritten content in HTML.
 
     return {
         "result": result["choices"][0]["message"]["content"]
-    }
-
-
-router = APIRouter()
-
-@router.post("/auth/login")
-def login(user_token=Depends(verify_firebase_token)):
-    user = get_or_create_user(user_token)
-    return {
-        "message": "Login successful",
-        "user": user
     }

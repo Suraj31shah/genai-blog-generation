@@ -1,72 +1,145 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="grid md:grid-cols-2 gap-8 items-start">
+<section class="max-w-7xl mx-auto space-y-12 pt-10 pb-20">
 
-  <!-- LEFT: Input Panel -->
-  <div class="space-y-4">
-    <h1 class="text-3xl font-bold">Generate Blog Instantly 🚀</h1>
-    <p class="text-zinc-400">Enter a topic and customize the tone & language.</p>
-
-    <textarea
-      id="prompt"
-      class="w-full h-32 bg-zinc-900 border border-zinc-700 rounded-lg p-4 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500"
-      placeholder="Enter blog topic..."
-    ></textarea>
-
-    <select
-      id="tone"
-      class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-white"
-    >
-      <option value="Professional">Professional</option>
-      <option value="Casual">Casual</option>
-      <option value="Technical">Technical</option>
-      <option value="Marketing">Marketing</option>
-    </select>
-
-    <select
-      id="language"
-      class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-white"
-    >
-      <option value="English">English</option>
-      <option value="Hindi">Hindi</option>
-      <option value="Spanish">Spanish</option>
-    </select>
-
-    <button
-      onclick="generateBlog()"
-      class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-semibold py-3 rounded-lg transition"
-    >
-      Generate Blog
-    </button>
+  <!-- 1. CENTERED HEADER -->
+  <div class="text-center space-y-4">
+    <h1
+      class="text-6xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-neutral-400 tracking-tight font-sans">
+      GenAI <span class="text-[#00ffa3]">Blog</span>
+    </h1>
+    <p class="text-zinc-400 text-xl font-mono max-w-2xl mx-auto">
+      Create viral content in seconds using advanced AI models.
+    </p>
   </div>
 
-  <!-- RIGHT: Editor + Image Sidebar -->
-  <div class="grid grid-cols-4 gap-4">
+  <!-- 2. CONTROL PANEL (Horizontal Bar) -->
+  <div class="glass p-8 rounded-3xl shadow-2xl animate-float" style="animation-duration: 10s;">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
 
-    <!-- Editor -->
-    <div class="col-span-3">
-      <textarea
-        id="editor"
-        class="w-full min-h-[300px] bg-zinc-900 border border-zinc-700 rounded-lg p-4 text-white"
-      ></textarea>
+      <!-- Topic Input (Grow) -->
+      <div class="md:col-span-8 space-y-2">
+        <label class="text-xs font-bold text-[#00ffa3] tracking-widest uppercase mb-1 block">Topic</label>
+        <input id="prompt" type="text"
+          class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 focus:outline-none focus:border-[#00ffa3] focus:ring-1 focus:ring-[#00ffa3] transition-all text-xl placeholder-zinc-700 font-medium"
+          placeholder="What do you want to write about?" />
+      </div>
+
+      <!-- Tone Selector -->
+      <div class="md:col-span-2 space-y-2">
+        <label class="text-xs font-bold text-[#b026ff] tracking-widest uppercase mb-1 block">Tone</label>
+        <div class="relative">
+          <select id="tone"
+            class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white appearance-none focus:border-[#b026ff] outline-none transition-colors cursor-pointer text-base">
+            <option value="Professional">Professional</option>
+            <option value="Casual">Casual</option>
+            <option value="Technical">Technical</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Funny">Funny</option>
+          </select>
+          <div class="absolute right-4 top-5 pointer-events-none text-zinc-500">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path
+                d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Language Selector -->
+      <div class="md:col-span-2 space-y-2">
+        <label class="text-xs font-bold text-cyan-400 tracking-widest uppercase mb-1 block">Language</label>
+        <div class="relative">
+          <select id="language"
+            class="w-full bg-black/50 border border-zinc-800 rounded-xl p-4 text-white appearance-none focus:border-cyan-400 outline-none transition-colors cursor-pointer text-base">
+            <option value="English">English</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Spanish">Spanish</option>
+            <option value="French">French</option>
+          </select>
+          <div class="absolute right-4 top-5 pointer-events-none text-zinc-500">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path
+                d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Image Sidebar -->
-    <div class="bg-zinc-900 p-3 rounded-lg space-y-3">
-      <h3 class="font-semibold text-sm">Images</h3>
-
-      <button
-        onclick="fetchImages()"
-        class="w-full bg-emerald-500 text-black py-2 rounded"
-      >
-        Fetch Images
+    <!-- Generate Button (Full Width Bottom) -->
+    <div class="mt-6">
+      <button onclick="generateBlog()"
+        class="group w-full relative bg-gradient-to-r from-[#00ffa3] to-emerald-600 text-black font-black text-xl py-5 rounded-xl transition-all hover:scale-[1.01] active:scale-[0.99] overflow-hidden shadow-lg shadow-emerald-900/20">
+        <span class="relative z-10 flex items-center justify-center gap-3">
+          GENERATE BLOG
+          <svg class="w-6 h-6 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+        </span>
+        <div
+          class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+        </div>
       </button>
+    </div>
+  </div>
 
-      <div
-        id="imageResults"
-        class="grid grid-cols-2 gap-2 mt-3"
-      ></div>
+  <!-- 3. WORKSPACE (Editor + Sidebar) -->
+  <div class="grid lg:grid-cols-12 gap-8 h-[800px]">
+
+    <!-- Editor Wrapper (9 cols) -->
+    <div class="lg:col-span-9 h-full flex flex-col">
+      <div class="glass rounded-2xl p-1 shadow-2xl flex flex-col h-full border border-zinc-800">
+        <!-- Mac-style Window Header -->
+        <div
+          class="bg-black/80 backdrop-blur-md p-3 rounded-t-xl border-b border-white/5 flex items-center justify-between px-6">
+          <div class="flex gap-2">
+            <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+            <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+            <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+          </div>
+          <span class="text-xs text-zinc-500 font-mono tracking-wider">BLOG GENERATOR</span>
+          <div class="w-10"></div> <!-- Spacer for balance -->
+        </div>
+
+        <div class="flex-grow bg-black rounded-b-xl overflow-hidden relative">
+          <textarea id="editor" class="w-full h-full"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visuals Sidebar (3 cols) -->
+    <div class="lg:col-span-3 h-full flex flex-col">
+      <div class="glass rounded-2xl p-6 flex flex-col h-full border border-zinc-800">
+        <h3 class="font-bold text-[#00ffa3] text-sm uppercase tracking-wider mb-6 flex items-center gap-3">
+          <span class="bg-[#00ffa3]/10 p-2 rounded-lg text-lg">🖼️</span>
+          Visual Gallery
+        </h3>
+
+        <!-- Search Hint -->
+        <p class="text-xs text-zinc-500 mb-4">
+          Images matching your topic will appear below.
+        </p>
+
+        <div class="flex-grow overflow-y-auto space-y-4 custom-scrollbar pr-2 -mr-2" id="imageResultsWrapper">
+          <div id="imageResults" class="grid grid-cols-1 gap-4">
+            <!-- Images will be injected here -->
+            <div
+              class="flex flex-col items-center justify-center h-48 text-center border-2 border-dashed border-zinc-800 rounded-xl">
+              <span class="text-2xl mb-2">🔭</span>
+              <p class="text-zinc-600 text-sm italic">Waiting for signals...</p>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="fetchImages()"
+          class="mt-6 w-full bg-zinc-900 border border-zinc-700 hover:border-[#00ffa3] text-zinc-300 hover:text-[#00ffa3] py-4 rounded-xl text-sm font-bold transition-all uppercase tracking-wide hover:shadow-[0_0_15px_rgba(0,255,163,0.1)]">
+          Fetch Visuals
+        </button>
+      </div>
     </div>
 
   </div>
@@ -74,10 +147,8 @@
 </section>
 
 <!-- ✅ Floating Selection Toolbar (OUTSIDE layout) -->
-<div
-  id="selectionToolbar"
-  class="hidden fixed bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg p-2 space-x-2 z-50"
->
+<div id="selectionToolbar"
+  class="hidden fixed bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg p-2 space-x-2 z-50">
   <button onclick="regenerate('rewrite')">Rewrite</button>
   <button onclick="regenerate('expand')">Expand</button>
   <button onclick="regenerate('shorten')">Shorten</button>
