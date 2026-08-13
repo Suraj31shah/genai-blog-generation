@@ -2,4 +2,4 @@ genai
 blog
 generation
 for
-genesis
+genesi
