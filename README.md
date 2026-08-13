@@ -3,3 +3,4 @@ blog
 generation
 for
 genesis
+ri
