@@ -3,4 +3,4 @@ blog
 generation
 for
 genesis
-ri
+rig
